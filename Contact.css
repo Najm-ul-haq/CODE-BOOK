@@ -1,0 +1,361 @@
+.contact {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  place-items: center;
+  overflow: hidden;
+  padding: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: #050505;
+  color: #fff;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  text-align: center;
+}
+
+.contact__image-wrap {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+}
+
+.contact__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.contact__folder {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: clamp(112px, min(22vw, 27vh), 245px);
+  container-type: inline-size;
+  box-sizing: border-box;
+  padding: clamp(7px, 5.5cqw, 16px);
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 37%);
+  border-radius: clamp(14px, 9cqw, 28px);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 34%), transparent 35%),
+    linear-gradient(180deg, rgb(240 240 248 / 27%), rgb(208 211 226 / 17%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 48%),
+    inset 0 -1px 0 rgb(255 255 255 / 12%),
+    0 8px 24px rgb(27 31 52 / 22%);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  isolation: isolate;
+}
+
+.contact__folder::before {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 12%;
+  width: 76%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 78%), transparent);
+  content: "";
+}
+
+.contact__folder-title {
+  margin: 0 0 clamp(5px, 4.8cqw, 14px);
+  color: rgb(255 255 255 / 96%);
+  font-size: clamp(9px, 5.5cqw, 15px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 24%);
+}
+
+.contact__apps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  gap: clamp(4px, 4cqw, 12px) clamp(2px, 2.5cqw, 8px);
+}
+
+.contact__app {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  justify-items: center;
+  gap: clamp(1px, 1.2cqw, 3px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    filter 160ms ease,
+    scale 160ms ease;
+}
+
+.contact__app:hover,
+.contact__app[aria-expanded="true"] {
+  z-index: 1;
+  scale: 1.12;
+  filter: drop-shadow(0 0 5px rgb(255 255 255 / 58%));
+}
+
+.contact__app:focus-visible,
+.contact__close:focus-visible {
+  outline: 2px solid #f0d47f;
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+
+.contact__app-tile {
+  display: grid;
+  width: clamp(18px, 19cqw, 34px);
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 36%);
+  border-radius: 23%;
+  background: #282933;
+  box-shadow:
+    0 2px 5px rgb(0 0 0 / 23%),
+    inset 0 1px 0 rgb(255 255 255 / 34%);
+}
+
+.contact__app--instagram .contact__app-tile {
+  border: 0;
+  background: radial-gradient(circle at 30% 108%, #ffd776 0%, #f56040 38%, #c13584 66%, #5851db 100%);
+}
+
+.contact__app--facebook .contact__app-tile {
+  border: 0;
+  background: #1877f2;
+}
+
+.contact__app--x .contact__app-tile {
+  background: #111;
+}
+
+.contact__app--email .contact__app-tile {
+  background: #fff;
+  color: #e7473d;
+}
+
+.contact__app--whatsapp .contact__app-tile {
+  border: 0;
+  background: #25a85a;
+}
+
+.contact__app--phone .contact__app-tile {
+  border: 0;
+  background: linear-gradient(145deg, #54d66b, #16a84a);
+}
+
+.contact__app-icon {
+  display: block;
+  width: 61%;
+  height: 61%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.contact__app--facebook .contact__app-icon path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.contact__app--instagram .contact__app-icon circle:last-child {
+  fill: currentColor;
+  stroke: none;
+}
+
+.contact__popup-icon-wrap {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgb(184 154 69 / 35%);
+  border-radius: 10px;
+  background: rgb(184 154 69 / 9%);
+  color: #d4b957;
+}
+
+.contact__popup-icon-wrap .contact__app-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.contact__dismiss-layer {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  background: rgb(0 0 0 / 20%);
+  animation: contact-fade-in 150ms ease-out both;
+}
+
+.contact__popup {
+  position: fixed;
+  width: min(320px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 1.4rem;
+  border: 1px solid rgb(184 154 69 / 36%);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 5%), transparent 40%),
+    #10100f;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 72%);
+  color: #fff;
+  text-align: left;
+  animation: contact-popup-in 170ms ease-out both;
+}
+
+.contact__close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.7rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 4%);
+  color: rgb(255 255 255 / 78%);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.contact__popup-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-right: 1.5rem;
+}
+
+.contact__popup-label {
+  margin: 0 0 0.2rem;
+  color: rgb(255 255 255 / 48%);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.contact__popup-title {
+  margin: 0;
+  font-size: 1.16rem;
+  font-weight: 550;
+  letter-spacing: -0.035em;
+}
+
+.contact__popup-detail {
+  margin: 1.2rem 0 0;
+  color: #e9d38a;
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+}
+
+.contact__popup-description {
+  margin: 0.55rem 0 0;
+  color: rgb(255 255 255 / 66%);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.contact__not-configured,
+.contact__placeholder-note {
+  margin: 0.8rem 0 0;
+  color: rgb(255 255 255 / 46%);
+  font-size: 0.67rem;
+  line-height: 1.5;
+}
+
+.contact__not-configured {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgb(255 255 255 / 9%);
+}
+
+@keyframes contact-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contact-popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .contact__folder {
+    width: clamp(124px, min(35vw, 30vh), 190px);
+  }
+
+  .contact__app-tile {
+    width: clamp(24px, 7vw, 34px);
+  }
+}
+
+@media (max-width: 380px) {
+  .contact__folder {
+    width: clamp(116px, min(38vw, 28vh), 150px);
+    padding: 6px;
+  }
+
+  .contact__folder-title {
+    font-size: clamp(8px, 6cqw, 11px);
+  }
+
+  .contact__app-tile {
+    width: clamp(24px, 8vw, 27px);
+  }
+
+  .contact__apps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contact__app-tile {
+    width: clamp(24px, 8vw, 27px);
+  }
+}
+
+@container (max-width: 120px) {
+  .contact__apps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact__app,
+  .contact__dismiss-layer,
+  .contact__popup {
+    transition: none;
+    animation: none;
+  }
+}
