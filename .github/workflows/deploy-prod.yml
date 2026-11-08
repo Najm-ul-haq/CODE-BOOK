@@ -1,0 +1,79 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy-production:
+    name: Production Release
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://codebook.pk
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Clean install dependencies
+        run: npm ci
+
+      - name: Build for Production
+        run: npm run build
+        env:
+          NODE_ENV: production
+          VITE_APP_ENV: production
+
+      - name: Deploy to Cloudflare Pages (Production)
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=codebook --branch=main
+
+      - name: Smoke Test Production URL
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://codebook.pk || echo "000")
+          echo "Production HTTP status: $HTTP_CODE"
+
+      - name: Notify Team (Webhook)
+        if: always()
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -n "$WEBHOOK_URL" ]; then
+            STATUS="${{ job.status }}"
+            COLOR=$([ "$STATUS" = "success" ] && echo 65280 || echo 16711680)
+            PAYLOAD=$(cat <<EOF
+            {
+              "embeds": [{
+                "title": "Production Deployment: $STATUS",
+                "color": $COLOR,
+                "fields": [
+                  {"name": "Commit", "value": "${{ github.sha }}", "inline": true},
+                  {"name": "Actor", "value": "${{ github.actor }}", "inline": true},
+                  {"name": "URL", "value": "https://codebook.pk", "inline": false}
+                ]
+              }]
+            }
+          EOF
+            )
+            curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$WEBHOOK_URL" || true
+          fi
+

@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import phoneImage from "./pexels-jakubzerdzicki-27574955.jpg";
 import "./Contact.css";
+
+const phoneImage = "/pexels-jakubzerdzicki-27574955.jpg";
 
 const apps = [
   {
     id: "instagram",
     label: "Instagram",
-    account: "Official profile not provided",
-    description: "Add CODE BOOK's verified Instagram URL to enable this profile.",
+    account: "@codebook.pk",
+    description: "Follow CODE BOOK on Instagram for our latest projects, design showcases, and engineering updates.",
     icon: "instagram",
+    url: "https://www.instagram.com/codebook.pk/",
   },
   {
     id: "facebook",

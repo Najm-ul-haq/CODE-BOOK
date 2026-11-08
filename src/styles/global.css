@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: clip;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+}
+
+/* Native Hardware Custom Cursor: 0ms latency, 100% responsive OS hardware cursor */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  * {
+    cursor: url("/cursor-default.svg") 2 2, auto;
+  }
+
+  a,
+  a *,
+  button,
+  button *,
+  [role="button"],
+  [role="button"] *,
+  input[type="submit"],
+  input[type="button"],
+  .project-card,
+  .project-card *,
+  .service-card,
+  .service-card *,
+  .service-focus__close,
+  .service-focus__cta,
+  .service-focus__cta *,
+  .header-nav__link,
+  .header-nav__link *,
+  .contact-tile,
+  .contact-tile * {
+    cursor: url("/cursor-pointer.svg") 2 2, pointer !important;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    cursor: text !important;
+  }
+}

@@ -7,7 +7,7 @@
   height: 100vh;
   height: 100dvh;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -16,23 +16,11 @@
   background-color: #050505;
   background-image:
     linear-gradient(180deg, rgb(0 0 0 / 18%) 0%, transparent 42%, rgb(0 0 0 / 10%) 100%),
-    url("./Untitled%20Design.png");
+    url("/Untitled%20Design.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover, contain;
   color: #fff;
-}
-
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-}
-
-html {
-  scroll-snap-type: y mandatory;
 }
 
 .hero__title {

@@ -1,0 +1,472 @@
+/* ─── Device Mockup Contact Styles ─── */
+
+.device-contact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background: #050505;
+  color: #fff;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Ambient neon lighting blobs in background */
+.device-contact__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(244, 114, 182, 0.25) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 50%, rgba(56, 189, 248, 0.25) 0%, transparent 45%);
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE VIEW: PHONE MOCKUP (< 768px / md:hidden)
+   ───────────────────────────────────────────────────────────── */
+.device-contact__phone-view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 1;
+}
+
+.device-contact__phone-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.device-contact__phone-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DESKTOP VIEW: FULLSCREEN LAPTOP MOCKUP (>= 768px / md:flex)
+   ───────────────────────────────────────────────────────────── */
+.device-contact__laptop-view {
+  position: relative;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .device-contact__phone-view {
+    display: none !important;
+  }
+  .device-contact__laptop-view {
+    display: flex !important;
+  }
+}
+
+/* Outer frame covers full screen */
+.device-contact__laptop-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Scaler keeps exact 1672:941 aspect ratio while filling full screen edge-to-edge */
+.device-contact__laptop-scaler {
+  position: relative;
+  width: 100vw;
+  height: 56.28vw; /* 941 / 1672 = 56.28% */
+  min-height: 100vh;
+  min-width: 177.68vh; /* 1672 / 941 = 1.7768 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.device-contact__laptop-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The screen area mapped to pixel precision in mockup-laptop.png (1672x941) */
+.device-contact__laptop-screen {
+  position: absolute;
+  left: 21.95%;
+  top: 15.83%;
+  width: 56.04%;
+  height: 56.32%;
+  overflow: hidden;
+  border-radius: clamp(3px, 0.4vw, 7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at 35% 25%, rgba(244, 114, 182, 0.22) 0%, rgba(253, 242, 248, 0.12) 45%, rgba(186, 230, 253, 0.22) 100%);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TOP NAVIGATION MENU (Pill glassmorphism bar)
+   ───────────────────────────────────────────────────────────── */
+.device-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(8px, 1.8vw, 22px);
+  padding: 4px clamp(10px, 1.5vw, 16px) 4px clamp(6px, 1vw, 10px);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  user-select: none;
+  z-index: 5;
+}
+
+.device-nav__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(14px, 1.6vw, 20px);
+  height: clamp(14px, 1.6vw, 20px);
+  border-radius: 50%;
+  overflow: hidden;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.device-nav__brand img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.device-nav__link {
+  color: rgba(30, 30, 45, 0.88);
+  font-size: clamp(8px, 1vw, 11px);
+  font-weight: 550;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.device-nav__link:hover {
+  color: #000;
+  opacity: 0.75;
+}
+
+/* Fixed/floating position for the nav inside phone */
+.device-contact__phone-nav {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CONTACT US GLASS CARD
+   ───────────────────────────────────────────────────────────── */
+.device-contact__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: clamp(10px, 1.5vw, 16px) clamp(12px, 2vw, 20px);
+  border-radius: clamp(14px, 1.8vw, 22px);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.2)),
+    linear-gradient(180deg, rgba(240, 240, 252, 0.28), rgba(210, 215, 238, 0.18));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 32px rgba(30, 35, 60, 0.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  user-select: none;
+  z-index: 4;
+}
+
+/* Phone folder placement */
+.device-contact__phone-card {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(130px, 42vw, 190px);
+}
+
+/* Laptop folder placement: perfectly centered */
+.device-contact__laptop-card {
+  margin: auto;
+  width: auto;
+}
+
+.device-contact__card-title {
+  margin: 0 0 clamp(7px, 1vw, 11px);
+  color: rgba(55, 40, 70, 0.92);
+  font-size: clamp(10px, 1.1vw, 13px);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+/* 3 x 2 social icon grid — tight, aligned, no stretching */
+.device-contact__grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
+  gap: clamp(6px, 1vw, 12px);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Icon button tile with authentic app styling */
+.device-contact__icon-btn {
+  display: grid;
+  place-items: center;
+  width: clamp(26px, 3.2vw, 42px);
+  height: clamp(26px, 3.2vw, 42px);
+  padding: 0;
+  border: 0;
+  border-radius: 23%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.3, 1), filter 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.device-contact__icon-btn:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.85));
+  z-index: 2;
+}
+
+.device-contact__icon-btn:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* Guaranteed CSS background gradients for each app */
+.device-contact__icon-btn--instagram {
+  background: radial-gradient(circle at 30% 108%, #ffd776 0%, #f56040 38%, #c13584 66%, #5851db 100%) !important;
+}
+
+.device-contact__icon-btn--facebook {
+  background: #1877F2 !important;
+}
+
+.device-contact__icon-btn--x {
+  background: #000000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+
+.device-contact__icon-btn--email {
+  background: #ffffff !important;
+}
+
+.device-contact__icon-btn--whatsapp {
+  background: #25D366 !important;
+}
+
+.device-contact__icon-btn--call {
+  background: linear-gradient(145deg, #54d66b, #16a84a) !important;
+}
+
+.device-contact__icon-btn svg {
+  width: 62%;
+  height: 62%;
+  display: block;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CONTACT POPUP DIALOG (MODAL)
+   ───────────────────────────────────────────────────────────── */
+.device-contact__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: modal-fade-in 160ms ease-out forwards;
+}
+
+.device-contact__modal {
+  position: relative;
+  width: min(340px, 92vw);
+  background: linear-gradient(145deg, rgba(28, 28, 34, 0.96), rgba(14, 14, 17, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  color: #fff;
+  text-align: left;
+  animation: modal-pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.device-contact__modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.device-contact__modal-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.device-contact__modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.device-contact__modal-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.device-contact__modal-icon svg {
+  width: 65%;
+  height: 65%;
+}
+
+.device-contact__modal-subtitle {
+  margin: 0 0 2px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.device-contact__modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.device-contact__modal-detail {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #38bdf8;
+  margin: 0.6rem 0;
+  word-break: break-all;
+}
+
+.device-contact__modal-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.device-contact__modal-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #000;
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: 0;
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.device-contact__modal-action:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.device-contact__modal-arrow {
+  font-size: 1.15rem;
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+
+.device-contact__modal-action:hover .device-contact__modal-arrow {
+  transform: translate(2px, -2px);
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
