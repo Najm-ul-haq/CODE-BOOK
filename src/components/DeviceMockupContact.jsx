@@ -175,8 +175,8 @@ export default function DeviceMockupContact() {
           1. MOBILE VIEW: Phone Mockup (< md breakpoint / < 768px)
           ───────────────────────────────────────────────────────────── */}
       <div className="device-contact__phone-view md:hidden">
-        {/* Phone Photo Background */}
-        <div className="device-contact__phone-wrap">
+        <div className="device-contact__phone-scaler">
+          {/* Phone Photo Background */}
           <img
             src={phoneImg}
             alt="Smartphone mockup with contact apps"
@@ -191,13 +191,15 @@ export default function DeviceMockupContact() {
               }
             }}
           />
-        </div>
 
-        {/* Floating Glassmorphic Contact Card Centered on Phone Screen */}
-        <ContactCard
-          className="device-contact__phone-card"
-          onSelectApp={(app) => setActiveApp(app)}
-        />
+          {/* Precision-mapped screen area inside phone mockup */}
+          <div className="device-contact__phone-screen">
+            <ContactCard
+              className="device-contact__phone-card"
+              onSelectApp={(app) => setActiveApp(app)}
+            />
+          </div>
+        </div>
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
