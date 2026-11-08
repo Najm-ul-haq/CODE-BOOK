@@ -146,16 +146,16 @@
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  padding: clamp(10px, 1.5vw, 16px) clamp(12px, 2vw, 20px);
-  border-radius: clamp(14px, 1.8vw, 22px);
+  padding: clamp(14px, 2vw, 22px) clamp(16px, 2.5vw, 26px);
+  border-radius: clamp(16px, 2.2vw, 24px);
   border: 1px solid rgba(255, 255, 255, 0.68);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.2)),
-    linear-gradient(180deg, rgba(240, 240, 252, 0.28), rgba(210, 215, 238, 0.18));
+    linear-gradient(145deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.22)),
+    linear-gradient(180deg, rgba(240, 240, 252, 0.32), rgba(210, 215, 238, 0.2));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
-    0 8px 32px rgba(30, 35, 60, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 30px rgba(30, 35, 60, 0.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   backdrop-filter: blur(20px) saturate(1.4);
   user-select: none;
@@ -166,30 +166,33 @@
   .device-contact__card {
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    background: rgba(245, 245, 255, 0.78);
+    background: rgba(245, 245, 255, 0.82);
+    padding: 14px 16px;
+    border-radius: 18px;
   }
 }
 
-/* Phone folder placement */
+/* Phone folder placement - Balanced in middle part of screen */
 .device-contact__phone-card {
   position: absolute;
-  top: 52%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(130px, 42vw, 190px);
+  width: clamp(210px, 58vw, 240px);
 }
 
 /* Laptop folder placement: perfectly centered */
 .device-contact__laptop-card {
   margin: auto;
   width: auto;
+  max-width: 340px;
 }
 
 .device-contact__card-title {
-  margin: 0 0 clamp(7px, 1vw, 11px);
-  color: rgba(55, 40, 70, 0.92);
-  font-size: clamp(10px, 1.1vw, 13px);
-  font-weight: 650;
+  margin: 0 0 clamp(9px, 1.4vw, 14px);
+  color: rgba(45, 30, 60, 0.95);
+  font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 700;
   letter-spacing: -0.01em;
   text-align: center;
 }
@@ -199,7 +202,7 @@
   display: grid;
   grid-template-columns: repeat(3, auto);
   grid-template-rows: repeat(2, auto);
-  gap: clamp(6px, 1vw, 12px);
+  gap: clamp(10px, 1.6vw, 16px);
   justify-content: center;
   align-items: center;
 }
@@ -208,17 +211,29 @@
 .device-contact__icon-btn {
   display: grid;
   place-items: center;
-  width: clamp(26px, 3.2vw, 42px);
-  height: clamp(26px, 3.2vw, 42px);
+  width: clamp(42px, 4.4vw, 54px);
+  height: clamp(42px, 4.4vw, 54px);
   padding: 0;
   border: 0;
-  border-radius: 23%;
+  border-radius: clamp(10px, 1vw, 13px);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: transform 160ms cubic-bezier(0.2, 0.8, 0.3, 1), filter 160ms ease;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .device-contact__grid {
+    gap: 12px;
+  }
+
+  .device-contact__icon-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+  }
 }
 
 .device-contact__icon-btn:hover {
