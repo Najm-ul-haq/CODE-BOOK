@@ -110,6 +110,32 @@
   }
 }
 
+@media (max-width: 600px) {
+  .projects-gallery {
+    padding: 4.5rem 1rem 3rem;
+  }
+  .projects-header {
+    margin-bottom: 1.5rem;
+  }
+  .project-card {
+    height: auto;
+    min-height: 420px;
+  }
+  .project-card-image {
+    height: 220px;
+  }
+  .project-card-body {
+    height: auto;
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (hover: none) {
+  .project-card:hover {
+    transform: none;
+  }
+}
+
 /* Card Shell: Locks compact height at 480px, border-radius: 1.25rem (20px) */
 .project-card {
   position: relative;

@@ -15,6 +15,22 @@ html {
   scroll-snap-type: y proximity;
 }
 
+/* Mobile Performance & Smooth Inertial Scroll */
+@media (max-width: 768px), (pointer: coarse) {
+  html {
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hero,
+  .services,
+  .device-contact {
+    scroll-snap-align: none !important;
+    scroll-snap-stop: normal !important;
+  }
+}
+
 /* Native Hardware Custom Cursor: 0ms latency, 100% responsive OS hardware cursor */
 @media (hover: hover) and (pointer: fine) {
   html,

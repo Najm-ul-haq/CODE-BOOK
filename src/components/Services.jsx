@@ -119,21 +119,34 @@ export default function Services() {
     if (!track) return;
 
     suppressClickRef.current = false;
-    const transform = window.getComputedStyle(track).transform;
-    const offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
-    const duration =
-      Number.parseFloat(window.getComputedStyle(track).animationDuration) * 1000 || 48000;
+    const isTouch = event.pointerType === "touch";
+
+    let offsetX = 0;
+    let duration = 48000;
+    let cycleWidth = track.scrollWidth / 4;
+
+    // For mouse drag, read transform and pause immediately.
+    // For touch, defer so vertical page scrolling is never blocked!
+    if (!isTouch) {
+      const transform = window.getComputedStyle(track).transform;
+      offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+      duration =
+        Number.parseFloat(window.getComputedStyle(track).animationDuration) * 1000 || 48000;
+      track.style.animationPlayState = "paused";
+    }
 
     dragRef.current = {
       pointerId: event.pointerId,
+      pointerType: event.pointerType,
       startX: event.clientX,
+      startY: event.clientY,
       offsetX,
-      cycleWidth: track.scrollWidth / 4,
+      cycleWidth,
       duration,
       track,
       isDragging: false,
+      initialized: !isTouch,
     };
-    track.style.animationPlayState = "paused";
   };
 
   const handlePointerMove = (event) => {
@@ -141,15 +154,44 @@ export default function Services() {
     if (!drag || drag.pointerId !== event.pointerId) return;
 
     const deltaX = event.clientX - drag.startX;
-    if (!drag.isDragging && Math.abs(deltaX) < 6) return;
+    const deltaY = event.clientY - drag.startY;
+
+    // On mobile touch: if user is scrolling vertically, release immediately to let browser scroll smoothly!
+    if (drag.pointerType === "touch" && !drag.isDragging) {
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        dragRef.current = null;
+        return;
+      }
+      if (Math.abs(deltaX) < 14 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) {
+        return;
+      }
+    } else if (!drag.isDragging && Math.abs(deltaX) < 6) {
+      return;
+    }
 
     if (!drag.isDragging) {
       drag.isDragging = true;
-      event.currentTarget.setPointerCapture(event.pointerId);
+      if (!drag.initialized) {
+        const transform = window.getComputedStyle(drag.track).transform;
+        drag.offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+        drag.duration =
+          Number.parseFloat(window.getComputedStyle(drag.track).animationDuration) * 1000 || 48000;
+        drag.cycleWidth = drag.track.scrollWidth / 4;
+        drag.track.style.animationPlayState = "paused";
+        drag.initialized = true;
+      }
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {
+        // Safe fallback if pointer capture fails
+      }
       event.currentTarget.classList.add("services__viewport--dragging");
     }
 
-    event.preventDefault();
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+
     const width = drag.cycleWidth;
     if (!width) return;
 
@@ -165,12 +207,18 @@ export default function Services() {
     if (drag.isDragging) {
       suppressClickRef.current = true;
       event.currentTarget.classList.remove("services__viewport--dragging");
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
+      try {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+      } catch {
+        // Safe fallback
       }
     }
 
-    drag.track.style.animationPlayState = "";
+    if (drag.track) {
+      drag.track.style.animationPlayState = "";
+    }
     dragRef.current = null;
   };
 

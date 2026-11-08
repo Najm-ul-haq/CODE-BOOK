@@ -173,8 +173,8 @@ function ContactCard({ onSelectApp, className = "" }) {
 /* ─── Main Export Component ─────────────────────────────────────────────────── */
 export default function DeviceMockupContact() {
   const [activeApp, setActiveApp] = useState(null);
-  const [laptopImg, setLaptopImg] = useState("/mockup-laptop.png");
-  const [phoneImg, setPhoneImg] = useState("/mockup-phone.jpg");
+  const [laptopImg, setLaptopImg] = useState("/mockup-laptop.webp");
+  const [phoneImg, setPhoneImg] = useState("/mockup-phone.webp");
 
   // Dismiss modal on Escape key
   useEffect(() => {
@@ -201,7 +201,9 @@ export default function DeviceMockupContact() {
             src={phoneImg}
             alt="Smartphone mockup with contact apps"
             className="device-contact__phone-img"
-            onError={() => setPhoneImg("/pexels-jakubzerdzicki-27574955.jpg")}
+            loading="lazy"
+            decoding="async"
+            onError={() => setPhoneImg("/mockup-phone.jpg")}
           />
         </div>
 
@@ -229,6 +231,8 @@ export default function DeviceMockupContact() {
               src={laptopImg}
               alt="Laptop mockup with contact apps"
               className="device-contact__laptop-img"
+              loading="lazy"
+              decoding="async"
               onError={() => setLaptopImg("/mockup-laptop.jpg")}
             />
 

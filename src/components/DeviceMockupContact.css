@@ -221,6 +221,19 @@
   z-index: 4;
 }
 
+@media (max-width: 768px) {
+  .device-contact__card {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    background: rgba(245, 245, 255, 0.78);
+  }
+  .device-nav {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
 /* Phone folder placement */
 .device-contact__phone-card {
   position: absolute;

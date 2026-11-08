@@ -96,7 +96,7 @@
 
 @media (max-width: 600px) {
   .site-header {
-    top: 1rem;
+    top: 0.85rem;
   }
 
   .site-header__brand {
@@ -106,7 +106,10 @@
 
   .site-header__nav {
     gap: 1.25rem;
-    padding: 0.65rem 1rem;
+    padding: 0.55rem 1rem 0.55rem 0.55rem;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    background: rgba(18, 18, 22, 0.9);
   }
 
   .site-header__link {
