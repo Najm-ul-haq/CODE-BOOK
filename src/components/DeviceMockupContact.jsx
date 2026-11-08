@@ -181,9 +181,15 @@ export default function DeviceMockupContact() {
             src={phoneImg}
             alt="Smartphone mockup with contact apps"
             className="device-contact__phone-img"
-            loading="lazy"
+            loading="eager"
             decoding="async"
-            onError={() => setPhoneImg("/mockup-phone.jpg")}
+            onError={() => {
+              if (phoneImg === "/mockup-phone.webp") {
+                setPhoneImg("/mockup-phone.png");
+              } else if (phoneImg === "/mockup-phone.png") {
+                setPhoneImg("/mockup-phone.jpg");
+              }
+            }}
           />
         </div>
 
@@ -206,9 +212,15 @@ export default function DeviceMockupContact() {
               src={laptopImg}
               alt="Laptop mockup with contact apps"
               className="device-contact__laptop-img"
-              loading="lazy"
+              loading="eager"
               decoding="async"
-              onError={() => setLaptopImg("/mockup-laptop.jpg")}
+              onError={() => {
+                if (laptopImg === "/mockup-laptop.webp") {
+                  setLaptopImg("/mockup-laptop.png");
+                } else if (laptopImg === "/mockup-laptop.png") {
+                  setLaptopImg("/mockup-laptop.jpg");
+                }
+              }}
             />
 
             {/* Laptop Screen Area: No inner navbar, Contact Us card centered */}
