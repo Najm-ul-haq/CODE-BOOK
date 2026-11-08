@@ -35,34 +35,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  padding: 1rem;
+  padding: 0;
   box-sizing: border-box;
   z-index: 1;
 }
 
-/* Scaler preserves exact 941:1672 aspect ratio and fits gracefully in any phone viewport */
+/* Scaler preserves exact 941:1672 aspect ratio and covers the screen edge-to-edge on any device */
 .device-contact__phone-scaler {
   position: relative;
-  height: min(84vh, 84dvh);
-  width: calc(min(84vh, 84dvh) * (941 / 1672));
-  max-width: 92vw;
-  max-height: calc(92vw * (1672 / 941));
-  aspect-ratio: 941 / 1672;
+  width: 100vw;
+  height: 177.68vw; /* 1672 / 941 = 1.7768 */
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-width: calc(100vh * (941 / 1672));
+  min-width: calc(100dvh * (941 / 1672));
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.8));
+  flex-shrink: 0;
 }
 
 .device-contact__phone-img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -79,6 +80,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  pointer-events: none;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -198,9 +200,10 @@
   }
 }
 
-/* Phone folder placement - Locked to 84% width inside phone's screen */
+/* Phone folder placement - Locked to 82% width inside phone's screen */
 .device-contact__phone-card {
-  width: 84%;
+  pointer-events: auto;
+  width: 82%;
   max-width: 100%;
 }
 
