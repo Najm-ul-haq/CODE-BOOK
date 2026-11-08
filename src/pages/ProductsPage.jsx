@@ -147,6 +147,13 @@ export default function ProductsPage() {
   const gridRef = useRef(null);
   const activeProject = projects.find((p) => p.id === projectId);
 
+  // Always reset scroll to the very top when entering or switching views
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }, [projectId]);
+
   // Smooth entrance animation for the cards on page load
   useEffect(() => {
     if (activeProject || !gridRef.current) return;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { CiLocationArrow1 } from "react-icons/ci";
 import "./DeviceMockupContact.css";
 
@@ -125,26 +125,6 @@ const contactApps = [
   },
 ];
 
-/* ─── Top Navigation Bar Component (Used inside phone mockup) ──────────────── */
-function TopNav({ className = "" }) {
-  return (
-    <nav className={`device-nav ${className}`} aria-label="Mockup Navigation">
-      <Link to="/" className="device-nav__brand" aria-label="CODE BOOK home">
-        <img src="/codebook logo.png" alt="CODE BOOK" />
-      </Link>
-      <a href="#services" className="device-nav__link">
-        Services
-      </a>
-      <Link to="/products" className="device-nav__link">
-        Products
-      </Link>
-      <a href="#contact" className="device-nav__link">
-        Contact
-      </a>
-    </nav>
-  );
-}
-
 /* ─── Floating Glassmorphism Contact Card Component ────────────────────────── */
 function ContactCard({ onSelectApp, className = "" }) {
   return (
@@ -207,11 +187,6 @@ export default function DeviceMockupContact() {
           />
         </div>
 
-        {/* Top Navigation Menu inside/above Phone */}
-        <div className="device-contact__phone-nav">
-          <TopNav />
-        </div>
-
         {/* Floating Glassmorphic Contact Card Centered on Phone Screen */}
         <ContactCard
           className="device-contact__phone-card"
@@ -248,58 +223,60 @@ export default function DeviceMockupContact() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          3. INTERACTIVE CONTACT MODAL
+          3. INTERACTIVE CONTACT MODAL (Mounted directly to body via portal)
           ───────────────────────────────────────────────────────────── */}
-      {activeApp && (
-        <div
-          className="device-contact__modal-backdrop"
-          onClick={() => setActiveApp(null)}
-          role="presentation"
-        >
+      {activeApp &&
+        createPortal(
           <div
-            className="device-contact__modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="contact-modal-title"
-            onClick={(e) => e.stopPropagation()}
+            className="device-contact__modal-backdrop"
+            onClick={() => setActiveApp(null)}
+            role="presentation"
           >
-            <button
-              type="button"
-              className="device-contact__modal-close"
-              aria-label="Close contact details"
-              onClick={() => setActiveApp(null)}
-              autoFocus
+            <div
+              className="device-contact__modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="contact-modal-title"
+              onClick={(e) => e.stopPropagation()}
             >
-              &times;
-            </button>
+              <button
+                type="button"
+                className="device-contact__modal-close"
+                aria-label="Close contact details"
+                onClick={() => setActiveApp(null)}
+                autoFocus
+              >
+                &times;
+              </button>
 
-            <div className="device-contact__modal-header">
-              <div className={`device-contact__modal-icon ${activeApp.tileClass}`}>
-                <activeApp.Icon />
+              <div className="device-contact__modal-header">
+                <div className={`device-contact__modal-icon ${activeApp.tileClass}`}>
+                  <activeApp.Icon />
+                </div>
+                <div>
+                  <p className="device-contact__modal-subtitle">{activeApp.subtitle}</p>
+                  <h3 className="device-contact__modal-title" id="contact-modal-title">
+                    {activeApp.label}
+                  </h3>
+                </div>
               </div>
-              <div>
-                <p className="device-contact__modal-subtitle">{activeApp.subtitle}</p>
-                <h3 className="device-contact__modal-title" id="contact-modal-title">
-                  {activeApp.label}
-                </h3>
-              </div>
+
+              <p className="device-contact__modal-detail">{activeApp.account}</p>
+              <p className="device-contact__modal-desc">{activeApp.description}</p>
+
+              <a
+                href={activeApp.actionHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="device-contact__modal-action"
+              >
+                {activeApp.actionText}{" "}
+                <CiLocationArrow1 className="device-contact__modal-arrow" aria-hidden="true" />
+              </a>
             </div>
-
-            <p className="device-contact__modal-detail">{activeApp.account}</p>
-            <p className="device-contact__modal-desc">{activeApp.description}</p>
-
-            <a
-              href={activeApp.actionHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="device-contact__modal-action"
-            >
-              {activeApp.actionText}{" "}
-              <CiLocationArrow1 className="device-contact__modal-arrow" aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

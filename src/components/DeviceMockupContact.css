@@ -139,65 +139,6 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   TOP NAVIGATION MENU (Pill glassmorphism bar)
-   ───────────────────────────────────────────────────────────── */
-.device-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(8px, 1.8vw, 22px);
-  padding: 4px clamp(10px, 1.5vw, 16px) 4px clamp(6px, 1vw, 10px);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.32);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  user-select: none;
-  z-index: 5;
-}
-
-.device-nav__brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(14px, 1.6vw, 20px);
-  height: clamp(14px, 1.6vw, 20px);
-  border-radius: 50%;
-  overflow: hidden;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.device-nav__brand img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.device-nav__link {
-  color: rgba(30, 30, 45, 0.88);
-  font-size: clamp(8px, 1vw, 11px);
-  font-weight: 550;
-  text-decoration: none;
-  letter-spacing: -0.01em;
-  transition: color 150ms ease, opacity 150ms ease;
-}
-
-.device-nav__link:hover {
-  color: #000;
-  opacity: 0.75;
-}
-
-/* Fixed/floating position for the nav inside phone */
-.device-contact__phone-nav {
-  position: absolute;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-}
-
-/* ─────────────────────────────────────────────────────────────
    CONTACT US GLASS CARD
    ───────────────────────────────────────────────────────────── */
 .device-contact__card {
@@ -226,11 +167,6 @@
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     background: rgba(245, 245, 255, 0.78);
-  }
-  .device-nav {
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -334,10 +270,10 @@
 .device-contact__modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 50;
-  background: rgba(0, 0, 0, 0.5);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.65);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;

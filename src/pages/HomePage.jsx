@@ -9,12 +9,16 @@ export default function HomePage() {
 
   useEffect(() => {
     document.title = "CODEBOOK";
-    if (!hash) return undefined;
+    if (hash) {
+      const frame = window.requestAnimationFrame(() => {
+        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
 
-    const frame = window.requestAnimationFrame(() => {
-      document.getElementById(hash.slice(1))?.scrollIntoView();
-    });
-    return () => window.cancelAnimationFrame(frame);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
   }, [hash]);
 
   return (
