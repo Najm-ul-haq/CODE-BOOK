@@ -1,9 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CiLocationArrow1 } from "react-icons/ci";
 import { projects } from "../data/projects.js";
 import "./ProductsPage.css";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 /* ─── Interactive Showcase Project Card ─────────────────────────────────────── */
 function ProjectCard({ project }) {
@@ -207,6 +212,7 @@ function ProjectDetail({ project, onBack }) {
 export default function ProductsPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
+  const galleryRef = useRef(null);
   const gridRef = useRef(null);
   const activeProject = projects.find((p) => p.id === projectId);
 
@@ -217,28 +223,178 @@ export default function ProductsPage() {
     if (document.body) document.body.scrollTop = 0;
   }, [projectId]);
 
-  // Smooth entrance animation for the cards on page load
+  // Master Lusion-inspired 3D curved split-panel expansion animation
+  const runExpansionAnimation = () => {
+    if (!gridRef.current) return;
+
+    const leftPanel = gridRef.current.querySelector(".project-panel-wrapper--left");
+    const rightPanel = gridRef.current.querySelector(".project-panel-wrapper--right");
+    const cardImages = gridRef.current.querySelectorAll(".project-card-image");
+    const cardTags = gridRef.current.querySelectorAll(".project-card__tag-wrap");
+    const cardBodies = gridRef.current.querySelectorAll(".project-card-body");
+    const headerTitle = document.querySelector(".projects-header__title");
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    if (headerTitle) {
+      tl.fromTo(
+        headerTitle,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, clearProps: "transform,opacity" },
+        0
+      );
+    }
+
+    // Left Panel: starts curved inward on Y axis with horizontal tuck and backward Z depth
+    if (leftPanel) {
+      tl.fromTo(
+        leftPanel,
+        {
+          x: -75,
+          y: 20,
+          z: -90,
+          rotateY: 22,
+          rotateX: 4,
+          scale: 0.88,
+          opacity: 0,
+          transformPerspective: 1400,
+          transformOrigin: "right center",
+          force3D: true,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+          rotateY: 0,
+          rotateX: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 1.15,
+          clearProps: "transform,opacity",
+        },
+        0.05
+      );
+    }
+
+    // Right Panel: starts mirrored curved inward on Y axis with horizontal tuck and backward Z depth
+    if (rightPanel) {
+      tl.fromTo(
+        rightPanel,
+        {
+          x: 75,
+          y: 20,
+          z: -90,
+          rotateY: -22,
+          rotateX: 4,
+          scale: 0.88,
+          opacity: 0,
+          transformPerspective: 1400,
+          transformOrigin: "left center",
+          force3D: true,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 0,
+          rotateY: 0,
+          rotateX: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 1.15,
+          clearProps: "transform,opacity",
+        },
+        0.12
+      );
+    }
+
+    // Synchronized information reveal
+    if (cardImages && cardImages.length) {
+      tl.fromTo(
+        cardImages,
+        { opacity: 0.82, scale: 1.04 },
+        { opacity: 1, scale: 1, duration: 0.9, stagger: 0.08, ease: "power2.out", clearProps: "all" },
+        0.15
+      );
+    }
+
+    if (cardTags && cardTags.length) {
+      tl.fromTo(
+        cardTags,
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out", clearProps: "all" },
+        0.28
+      );
+    }
+
+    if (cardBodies && cardBodies.length) {
+      tl.fromTo(
+        cardBodies,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: "power2.out", clearProps: "all" },
+        0.32
+      );
+    }
+  };
+
+  // Run on mount and on scroll
   useEffect(() => {
     if (activeProject || !gridRef.current) return;
 
-    const cards = gridRef.current.querySelectorAll(".project-card");
-    gsap.fromTo(
-      cards,
-      {
-        opacity: 0,
-        y: 16,
-        force3D: true,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.55,
-        stagger: 0.08,
-        ease: "power3.out",
-        clearProps: "transform,opacity",
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // Trigger via ScrollTrigger when section comes into view
+      ScrollTrigger.create({
+        trigger: galleryRef.current || gridRef.current,
+        start: "top 85%",
+        onEnter: () => runExpansionAnimation(),
+        once: true,
+      });
+
+      // Immediate play if already in view
+      const rect = (galleryRef.current || gridRef.current)?.getBoundingClientRect();
+      if (rect && rect.top < window.innerHeight && rect.bottom > 0) {
+        runExpansionAnimation();
       }
-    );
+    }, galleryRef);
+
+    return () => ctx.revert();
   }, [activeProject]);
+
+  // Interactive 3D Perspective Mouse Parallax (Signature Lusion Polish)
+  const handleMouseMove = (e) => {
+    if (!gridRef.current) return;
+    const rect = galleryRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const xPercent = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    const yPercent = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+
+    gsap.to(gridRef.current, {
+      rotateY: xPercent * 6,
+      rotateX: -yPercent * 6,
+      duration: 0.6,
+      ease: "power1.out",
+      transformPerspective: 1400,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!gridRef.current) return;
+    gsap.to(gridRef.current, {
+      rotateY: 0,
+      rotateX: 0,
+      duration: 0.8,
+      ease: "power2.out",
+    });
+  };
 
   // Set document title
   useEffect(() => {
@@ -316,18 +472,39 @@ export default function ProductsPage() {
       {/* Background ambient lighting */}
       <div className="projects-page__ambient" aria-hidden="true" />
 
-      <section className="projects-gallery">
+      <section
+        className="projects-gallery"
+        ref={galleryRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Header */}
         <header className="projects-header">
           <div className="projects-header__top">
             <h1 className="projects-header__title">PRODUCTS</h1>
+            <button
+              type="button"
+              className="projects-header__expand-trigger"
+              onClick={runExpansionAnimation}
+              aria-label="Replay 3D expanding panel animation"
+            >
+              <span className="projects-header__expand-dot" />
+              <span>3D EXPAND</span>
+            </button>
           </div>
         </header>
 
         {/* 2-Column Responsive Showcase Grid */}
         <div className="projects-grid" ref={gridRef}>
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+          {projects.map((project, index) => (
+            <div
+              className={`project-panel-wrapper project-panel-wrapper--${
+                index % 2 === 0 ? "left" : "right"
+              } project-panel-wrapper--${project.id}`}
+              key={project.id}
+            >
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       </section>
