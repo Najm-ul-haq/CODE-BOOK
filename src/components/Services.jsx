@@ -122,16 +122,17 @@ export default function Services() {
     const isTouch = event.pointerType === "touch";
 
     let offsetX = 0;
-    let duration = 48000;
+    let duration =
+      Number.parseFloat(window.getComputedStyle(track).animationDuration) * 1000 || 48000;
     let cycleWidth = track.scrollWidth / 4;
+    const animation = track.getAnimations()[0];
+    if (!animation) return;
 
     // For mouse drag, read transform and pause immediately.
     // For touch, defer so vertical page scrolling is never blocked!
     if (!isTouch) {
       const transform = window.getComputedStyle(track).transform;
       offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
-      duration =
-        Number.parseFloat(window.getComputedStyle(track).animationDuration) * 1000 || 48000;
       track.style.animationPlayState = "paused";
     }
 
@@ -143,6 +144,7 @@ export default function Services() {
       offsetX,
       cycleWidth,
       duration,
+      animation,
       track,
       isDragging: false,
       initialized: !isTouch,
@@ -197,7 +199,7 @@ export default function Services() {
 
     const offsetX = drag.offsetX + deltaX;
     const wrappedOffset = -(((-offsetX % width) + width) % width);
-    drag.track.style.animationDelay = `${-((wrappedOffset / width) * drag.duration)}ms`;
+    drag.animation.currentTime = (-wrappedOffset / width) * drag.duration;
   };
 
   const handlePointerUp = (event) => {
