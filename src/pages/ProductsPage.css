@@ -12,6 +12,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  isolation: isolate;
+  transform: translateZ(0);
 }
 
 .project-detail {
@@ -153,6 +155,8 @@
   outline: none;
   transition: transform 300ms ease, box-shadow 350ms ease, border-color 300ms ease;
   -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Light RGB Border Overlay — activated ONLY on the specific card being hovered */
@@ -227,6 +231,26 @@
 .project-card:focus-visible {
   outline: 2px solid #38bdf8;
   outline-offset: 4px;
+}
+
+::view-transition-group(*) {
+  animation-duration: 650ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+  animation-timing-function: ease;
+}
+
+::view-transition-old(project-image-*),
+::view-transition-new(project-image-*) {
+  animation-duration: 650ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  height: 100%;
+  object-fit: cover;
+  overflow: clip;
 }
 
 /* 1. Preview Image Area: takes ~58% of card height */
@@ -444,19 +468,22 @@
    ───────────────────────────────────────────────────────────── */
 .project-detail {
   background: #050505;
+  scroll-snap-type: y mandatory;
 }
 
 .project-detail__hero {
   position: relative;
   display: flex;
-  min-height: min(85vh, 850px);
-  min-height: min(85svh, 850px);
+  min-height: 100vh;
+  min-height: 100svh;
   box-sizing: border-box;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   padding: clamp(7rem, 13vh, 9rem) clamp(1.5rem, 7vw, 7rem) clamp(3.5rem, 7vh, 5rem);
   isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .project-detail__image,
@@ -543,7 +570,7 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 999px;
   padding: 0.65rem 1.15rem;
-  background: rgba(15, 15, 18, 0.6);
+  background: rgba(15, 15, 18, 0.48);
   color: #fff;
   font: inherit;
   font-size: 0.65rem;
@@ -556,15 +583,21 @@
 }
 
 .project-detail__back:hover {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateX(-2px);
+  box-shadow: 0 0 18px rgba(143, 180, 255, 0.24);
 }
 
 .project-detail__content {
   width: min(100% - 3rem, 1200px);
   margin: 0 auto;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100svh;
   padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(4rem, 8vw, 7rem);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .project-detail__lead {

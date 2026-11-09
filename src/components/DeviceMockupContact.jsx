@@ -153,8 +153,8 @@ function ContactCard({ onSelectApp, className = "" }) {
 /* ─── Main Export Component ─────────────────────────────────────────────────── */
 export default function DeviceMockupContact() {
   const [activeApp, setActiveApp] = useState(null);
-  const [laptopImg, setLaptopImg] = useState("/mockup-laptop.webp");
-  const [phoneImg, setPhoneImg] = useState("/mockup-phone.webp");
+  const [laptopImg, setLaptopImg] = useState("/laptop.jpg");
+  const [phoneImg, setPhoneImg] = useState("/mockup-phone%20(2).webp");
 
   // Dismiss modal on Escape key
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function DeviceMockupContact() {
             loading="eager"
             decoding="async"
             onError={() => {
-              if (phoneImg === "/mockup-phone.webp") {
+              if (phoneImg === "/mockup-phone%20(2).webp") {
                 setPhoneImg("/mockup-phone.png");
               } else if (phoneImg === "/mockup-phone.png") {
                 setPhoneImg("/mockup-phone.jpg");
@@ -217,7 +217,7 @@ export default function DeviceMockupContact() {
               loading="eager"
               decoding="async"
               onError={() => {
-                if (laptopImg === "/mockup-laptop.webp") {
+                if (laptopImg === "/laptop.jpg") {
                   setLaptopImg("/mockup-laptop.png");
                 } else if (laptopImg === "/mockup-laptop.png") {
                   setLaptopImg("/mockup-laptop.jpg");

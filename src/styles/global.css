@@ -15,20 +15,40 @@ html {
   scroll-snap-type: y proximity;
 }
 
+html:has(.project-detail) {
+  scroll-snap-type: y mandatory;
+}
+
+@media (min-width: 769px) and (hover: hover) {
+  html.landing-page-active {
+    scroll-snap-type: y mandatory;
+  }
+
+  html.landing-page-active .hero,
+  html.landing-page-active .services,
+  html.landing-page-active .device-contact {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
 /* Mobile Performance & Smooth Inertial Scroll */
 @media (max-width: 768px), (pointer: coarse) {
   html {
     scroll-behavior: auto !important;
-    scroll-snap-type: none !important;
     -webkit-overflow-scrolling: touch;
   }
+}
 
-  .hero,
-  .services,
-  .device-contact {
-    scroll-snap-align: none !important;
-    scroll-snap-stop: normal !important;
-  }
+html.landing-page-active {
+  scroll-snap-type: y mandatory;
+}
+
+html.landing-page-active .hero,
+html.landing-page-active .services,
+html.landing-page-active .device-contact {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* Native Hardware Custom Cursor: 0ms latency, 100% responsive OS hardware cursor */

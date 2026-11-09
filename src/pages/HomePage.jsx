@@ -9,16 +9,23 @@ export default function HomePage() {
 
   useEffect(() => {
     document.title = "CODEBOOK";
+    document.documentElement.classList.add("landing-page-active");
+
     if (hash) {
       const frame = window.requestAnimationFrame(() => {
         document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
       });
-      return () => window.cancelAnimationFrame(frame);
+      return () => {
+        window.cancelAnimationFrame(frame);
+        document.documentElement.classList.remove("landing-page-active");
+      };
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     if (document.documentElement) document.documentElement.scrollTop = 0;
     if (document.body) document.body.scrollTop = 0;
+
+    return () => document.documentElement.classList.remove("landing-page-active");
   }, [hash]);
 
   return (

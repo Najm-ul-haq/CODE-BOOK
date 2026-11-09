@@ -5,7 +5,7 @@ export const projects = [
     path: "/projects/next-station",
     category: "AI · EDUCATION",
     status: "Live",
-    image: "/Website%20Development.jpg",
+    image: "/Next-station.webp",
     alt: "Monochrome illustrative image for Next Station",
     description:
       "An AI-powered university guidance platform helping students in Pakistan find a direction that fits.",
@@ -24,7 +24,7 @@ export const projects = [
     path: "/projects/zaroorat",
     category: "LOCAL SERVICES · MARKETPLACE",
     status: "In Development",
-    image: "/App%20Development.jpg",
+    image: "/Zaroorat.webp",
     alt: "Monochrome illustrative image for Zaroorat",
     description:
       "A local services marketplace connecting people with trusted providers for everyday needs.",

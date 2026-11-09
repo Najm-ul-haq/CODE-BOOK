@@ -56,7 +56,7 @@
 .services__track {
   display: flex;
   width: max-content;
-  animation: services-scroll 24s linear infinite;
+  animation: services-scroll 48s linear infinite;
   will-change: transform;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -264,7 +264,10 @@
   max-height: min(760px, calc(100dvh - 2rem));
   min-height: min(490px, calc(100dvh - 2rem));
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid transparent;
   border-radius: 24px;
   background:
@@ -323,10 +326,18 @@
 .service-focus__details {
   position: relative;
   min-width: 0;
-  overflow: auto;
+  min-height: 0;
+  height: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
   padding: clamp(2rem, 4vw, 3.35rem) clamp(1.5rem, 4vw, 3.2rem);
   scrollbar-color: rgb(255 255 255 / 28%) transparent;
   animation: service-focus-details-in 480ms ease 180ms both;
+}
+
+.service-focus__cta {
+  margin-bottom: 0.25rem;
 }
 
 .service-focus__close {
@@ -524,11 +535,15 @@
 
   .service-focus__dialog {
     width: min(520px, 100%);
+    height: calc(100dvh - 1.3rem);
     max-height: calc(100dvh - 1.3rem);
     min-height: 0;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(145px, 27dvh) minmax(0, 1fr);
     border-radius: 19px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .service-focus__visual {
@@ -536,7 +551,10 @@
   }
 
   .service-focus__details {
+    height: auto;
+    overflow: visible;
     padding: 1.5rem 1.35rem 1.4rem;
+    box-sizing: border-box;
   }
 
   .service-focus__eyebrow {

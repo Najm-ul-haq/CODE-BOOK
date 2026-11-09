@@ -6,14 +6,76 @@ import { projects } from "../data/projects.js";
 import "./ProductsPage.css";
 
 /* ─── Interactive Showcase Project Card ─────────────────────────────────────── */
-function ProjectCard({ project, index }) {
+function ProjectCard({ project }) {
   const isLive = project.status === "Live";
+  const navigate = useNavigate();
+  const isTouchDevice =
+    window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+
+  const openProject = (event) => {
+    event.preventDefault();
+    const destination = project.path;
+
+    if (isTouchDevice) {
+      const cardImage = event.currentTarget.querySelector(".project-card__img");
+      const bounds = cardImage.getBoundingClientRect();
+      sessionStorage.setItem(
+        "project-card-transition",
+        JSON.stringify({ projectId: project.id, rect: bounds.toJSON(), src: project.image })
+      );
+
+      const clone = cardImage.cloneNode();
+      Object.assign(clone.style, {
+        position: "fixed",
+        zIndex: "9999",
+        left: `${bounds.left}px`,
+        top: `${bounds.top}px`,
+        width: `${bounds.width}px`,
+        height: `${bounds.height}px`,
+        borderRadius: getComputedStyle(cardImage.parentElement).borderRadius || "0",
+        objectFit: "cover",
+        pointerEvents: "none",
+      });
+      document.body.appendChild(clone);
+
+      gsap.timeline({
+        defaults: { ease: "expo.inOut" },
+        onComplete: () => {
+          navigate(destination);
+          window.requestAnimationFrame(() => window.requestAnimationFrame(() => clone.remove()));
+        },
+      }).to(clone, {
+        left: 0,
+        top: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        borderRadius: 0,
+        duration: 0.75,
+        opacity: 0.99,
+      }, 0).to(clone, {
+        scale: 1.012,
+        duration: 0.18,
+        ease: "power1.out",
+        yoyo: true,
+        repeat: 1,
+      });
+      return;
+    }
+
+    if (!document.startViewTransition) {
+      navigate(destination);
+      return;
+    }
+
+    document.startViewTransition(() => navigate(destination));
+  };
 
   return (
     <Link
       to={project.path}
       className={`project-card project-card--${project.id}`}
       aria-label={`View ${project.name} project details`}
+      onClick={openProject}
     >
       {/* Light RGB Animated Border on hover (active for this specific card only) */}
       <span className="project-card__rgb-border" aria-hidden="true" />
@@ -25,6 +87,7 @@ function ProjectCard({ project, index }) {
             src={project.image}
             alt={project.name}
             className="project-card__img"
+            style={{ viewTransitionName: `project-image-${project.id}` }}
             loading="eager"
             decoding="async"
           />
@@ -41,7 +104,6 @@ function ProjectCard({ project, index }) {
             />
             {project.status}
           </span>
-          <span className="project-card__status-pill">0{index + 1}</span>
         </div>
       </div>
 
@@ -75,13 +137,10 @@ function ProjectDetail({ project, onBack }) {
           className="project-detail__image"
           src={project.image}
           alt={project.name}
+          style={{ viewTransitionName: `project-image-${project.id}` }}
           loading="eager"
         />
         <div className="project-detail__image-shade" aria-hidden="true" />
-        <div className="project-detail__hero-meta">
-          <span>CODE BOOK / PROJECT {project.id === "next-station" ? "01" : "02"}</span>
-          <span>{project.category}</span>
-        </div>
         <div className="project-detail__hero-title">
           <p className="project-detail__status">
             <span className="project-detail__status-dot" />
@@ -90,8 +149,13 @@ function ProjectDetail({ project, onBack }) {
           <h1 id="project-detail-title">{project.name}</h1>
           {project.tagline && <p className="project-detail__tagline">{project.tagline}</p>}
         </div>
-        <button className="project-detail__back" type="button" onClick={onBack}>
-          <span aria-hidden="true">←</span> ALL PROJECTS
+        <button
+          className="project-detail__back"
+          type="button"
+          onClick={onBack}
+          aria-label="Back to products"
+        >
+          <span aria-hidden="true">←</span>
         </button>
       </section>
 
@@ -134,7 +198,6 @@ function ProjectDetail({ project, onBack }) {
 
       <footer className="project-detail__footer">
         <span>CODE BOOK</span>
-        <span>IDEAS INTO REALITY</span>
       </footer>
     </main>
   );
@@ -163,16 +226,16 @@ export default function ProductsPage() {
       cards,
       {
         opacity: 0,
-        y: 35,
-        scale: 0.97,
+        y: 16,
+        force3D: true,
       },
       {
         opacity: 1,
         y: 0,
-        scale: 1,
-        duration: 0.7,
-        stagger: 0.15,
+        duration: 0.55,
+        stagger: 0.08,
         ease: "power3.out",
+        clearProps: "transform,opacity",
       }
     );
   }, [activeProject]);
@@ -182,12 +245,66 @@ export default function ProductsPage() {
     if (activeProject) {
       document.title = `${activeProject.name} | CODEBOOK`;
     } else {
-      document.title = "Projects | CODEBOOK";
+      document.title = "Products | CODEBOOK";
     }
   }, [activeProject]);
 
   const handleBack = () => {
-    navigate("/products");
+    const transition = JSON.parse(
+      sessionStorage.getItem("project-card-transition") || "null"
+    );
+    const isTouchDevice =
+      window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+
+    if (isTouchDevice && transition?.rect) {
+      const detailImage = document.querySelector(".project-detail__image");
+      const clone = detailImage.cloneNode();
+      const bounds = detailImage.getBoundingClientRect();
+
+      Object.assign(clone.style, {
+        position: "fixed",
+        zIndex: "9999",
+        left: `${bounds.left}px`,
+        top: `${bounds.top}px`,
+        width: `${bounds.width}px`,
+        height: `${bounds.height}px`,
+        objectFit: "cover",
+        pointerEvents: "none",
+      });
+      document.body.appendChild(clone);
+
+      gsap.timeline({
+        defaults: { ease: "expo.inOut" },
+        onStart: () => {
+          navigate("/products");
+        },
+        onComplete: () => {
+          window.requestAnimationFrame(() => {
+            clone.remove();
+            sessionStorage.removeItem("project-card-transition");
+          });
+        },
+      }).to(clone, {
+        left: transition.rect.left,
+        top: transition.rect.top,
+        width: transition.rect.width,
+        height: transition.rect.height,
+        borderRadius: "1.25rem",
+        duration: 0.75,
+      }, 0).to(clone, {
+        opacity: 0.96,
+        duration: 0.12,
+        ease: "power1.out",
+      });
+      return;
+    }
+
+    if (!document.startViewTransition) {
+      navigate("/products");
+      return;
+    }
+
+    document.startViewTransition(() => navigate("/products"));
   };
 
   if (activeProject) {
@@ -203,24 +320,20 @@ export default function ProductsPage() {
         {/* Header */}
         <header className="projects-header">
           <div className="projects-header__top">
-            <h1 className="projects-header__title">PROJECTS</h1>
-            <span className="projects-header__badge">
-              {projects.length} FEATURED PLATFORMS
-            </span>
+            <h1 className="projects-header__title">PRODUCTS</h1>
           </div>
         </header>
 
         {/* 2-Column Responsive Showcase Grid */}
         <div className="projects-grid" ref={gridRef}>
-          {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
+          {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       </section>
 
       <footer className="projects-footer">
         <span>CODE BOOK</span>
-        <span>IDEAS INTO REALITY</span>
       </footer>
     </main>
   );

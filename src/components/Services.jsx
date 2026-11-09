@@ -197,7 +197,7 @@ export default function Services() {
 
     const offsetX = drag.offsetX + deltaX;
     const wrappedOffset = -(((-offsetX % width) + width) % width);
-    drag.track.style.animationDelay = `${(wrappedOffset / width) * drag.duration}ms`;
+    drag.track.style.animationDelay = `${-((wrappedOffset / width) * drag.duration)}ms`;
   };
 
   const handlePointerUp = (event) => {
@@ -282,7 +282,9 @@ export default function Services() {
       document.body.style.top = bodyStyles.top;
       document.body.style.width = bodyStyles.width;
       document.body.style.overflow = bodyStyles.overflow;
-      window.scrollTo(0, scrollY);
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
+      });
       triggerRef.current?.focus({ preventScroll: true });
       window.clearTimeout(closeTimerRef.current);
     };
@@ -398,10 +400,18 @@ export default function Services() {
                 onClick={(event) => {
                   event.preventDefault();
                   closeService(() => {
-                    document.getElementById("contact")?.scrollIntoView({
-                      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                        ? "instant"
-                        : "smooth",
+                    window.requestAnimationFrame(() => {
+                      window.requestAnimationFrame(() => {
+                        const contact = document.getElementById("contact");
+                        if (!contact) return;
+
+                        contact.scrollIntoView({
+                          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                            ? "instant"
+                            : "smooth",
+                          block: "start",
+                        });
+                      });
                     });
                   });
                 }}
