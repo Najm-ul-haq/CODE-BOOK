@@ -7,65 +7,66 @@ const services = [
   {
     title: "Web Development",
     description:
-      "Fast, responsive websites designed to bring your business online.",
+      "Fast, modern websites that look great on phones, tablets, and computers.",
     image: "/Website%20Development.jpg",
     imageAlt: "Website displayed on a laptop in a modern workspace",
     detail:
-      "CODE BOOK designs and builds responsive websites that make your service easy to understand and use.",
+      "CODE BOOK designs and builds clean, fast websites that are easy to navigate and help customers find your business online.",
     capabilities: [
-      "Responsive page and interface design",
-      "Landing pages and product websites",
-      "Accessible, clear interactions",
-      "Performance-minded frontends",
+      "Designs that look great on phones, tablets, and desktops",
+      "Fast-loading pages so visitors never have to wait",
+      "Clear, simple layouts so people quickly find what they need",
+      "Modern pages to showcase your products and services",
     ],
-    solutions: "Marketing websites, product pages, and web application interfaces.",
+    solutions: "Business websites, landing pages, and online stores.",
   },
   {
     title: "App Development",
-    description: "Intuitive mobile applications built for everyday use.",
+    description:
+      "Easy-to-use mobile apps for iPhone and Android built for daily life.",
     image: "/App%20Development.jpg",
     imageAlt: "Mobile applications displayed on a smartphone",
     detail:
-      "CODE BOOK shapes mobile experiences around the everyday tasks people need to complete.",
+      "CODE BOOK builds smooth, reliable mobile apps designed to make everyday tasks simple and enjoyable for your users.",
     capabilities: [
-      "Mobile user flows and interface design",
-      "Cross-platform application development",
-      "API and service integration",
-      "Usable, accessible app experiences",
+      "Apps for both Apple iPhone and Android phones",
+      "Simple, clean screens that are easy to tap and navigate",
+      "Helpful features like user login, notifications, and payments",
+      "Smooth and reliable performance without frustrating bugs",
     ],
-    solutions: "Mobile app prototypes, application interfaces, and connected app experiences.",
+    solutions: "Customer mobile apps, booking & ordering apps, and app prototypes.",
   },
   {
     title: "Custom Software Development",
     description:
-      "Tailored software that simplifies workflows and solves business problems.",
+      "Custom software built just for your business to save time and work faster.",
     image: "/Custom%20Software%20Development.jpg",
     imageAlt: "Software development workspace with code on a laptop",
     detail:
-      "CODE BOOK builds purpose-fit software for teams whose processes need more than an off-the-shelf tool.",
+      "When standard ready-made apps don't fit, CODE BOOK builds custom tools made specifically for the way your business works.",
     capabilities: [
-      "Workflow and requirements mapping",
-      "Internal tools and dashboards",
-      "API and data-flow integration",
-      "Automation for repetitive tasks",
+      "Easy-to-use dashboards to track your daily work and numbers",
+      "Automating repetitive daily tasks to save hours of manual effort",
+      "Connecting your existing tools so everything works together",
+      "Software designed around your team's real daily routine",
     ],
-    solutions: "Operational dashboards, internal tools, and workflow applications.",
+    solutions: "Management dashboards, client portals, booking systems, and team tools.",
   },
   {
     title: "AI Solutions & Integration",
     description:
-      "AI-powered tools, intelligent assistants, and automation integrated into your workflow.",
+      "Smart AI helpers and chatbots that answer questions and do daily tasks automatically.",
     image: "/AI%20Solutions.jpg",
     imageAlt: "AI assistant interface displayed on a phone",
     detail:
-      "CODE BOOK helps teams add useful AI capabilities to products and workflows, with a clear role for people in the process.",
+      "CODE BOOK sets up smart AI helpers that can answer customer questions 24/7, organize information, and take care of repetitive tasks.",
     capabilities: [
-      "AI assistant and chat experiences",
-      "AI-enabled workflow concepts",
-      "Model and service integrations",
-      "Human review and handoff patterns",
+      "Friendly AI chatbots that answer questions instantly",
+      "Smart tools to read, summarize, and organize information",
+      "Connecting smart AI tools into your daily apps and website",
+      "Simple review controls so you and your team always stay in charge",
     ],
-    solutions: "Assistant prototypes, document workflows, and integrated AI features.",
+    solutions: "Customer support chatbots, automatic document helpers, and smart search.",
   },
 ];
 
@@ -102,18 +103,49 @@ function ServiceCards({ duplicate = false, onSelect }) {
 }
 
 export default function Services() {
-  const [activeService, setActiveService] = useState(null);
-  const [isClosing, setIsClosing] = useState(false);
+  // Explicit Finite State Machine for Modal:
+  // States: { status: "idle" } | { status: "open", service } | { status: "closing", service }
+  const [modalState, setModalState] = useState({ status: "idle" });
+  const activeService = modalState.status !== "idle" ? modalState.service : null;
+  const isClosing = modalState.status === "closing";
+
   const dialogRef = useRef(null);
   const triggerRef = useRef(null);
   const originRectRef = useRef(null);
   const closeTimerRef = useRef(null);
   const afterCloseRef = useRef(null);
-  const dragRef = useRef(null);
+
+  // Explicit Gesture State Machine:
+  // States: 'idle' | 'pending_touch' | 'paused_mouse' | 'dragging'
+  const gestureRef = useRef({ status: "idle" });
   const suppressClickRef = useRef(false);
 
+  const endGesture = (event) => {
+    const currentGesture = gestureRef.current;
+    if (currentGesture.status === "idle") return;
+
+    if (currentGesture.status === "dragging") {
+      suppressClickRef.current = true;
+      event.currentTarget.classList.remove("services__viewport--dragging");
+      try {
+        if (event.currentTarget.hasPointerCapture(currentGesture.pointerId)) {
+          event.currentTarget.releasePointerCapture(currentGesture.pointerId);
+        }
+      } catch {
+        // Safe fallback if pointer capture release fails
+      }
+    }
+
+    if (currentGesture.track) {
+      currentGesture.track.style.animationPlayState = "";
+    }
+
+    gestureRef.current = { status: "idle" };
+  };
+
   const handlePointerDown = (event) => {
-    if (event.button !== 0 || activeService) return;
+    // Only accept left clicks when modal is fully idle
+    if (event.button !== 0 || modalState.status !== "idle") return;
 
     const track = event.currentTarget.querySelector(".services__track");
     if (!track) return;
@@ -122,21 +154,20 @@ export default function Services() {
     const isTouch = event.pointerType === "touch";
 
     let offsetX = 0;
-    let duration =
+    const duration =
       Number.parseFloat(window.getComputedStyle(track).animationDuration) * 1000 || 48000;
-    let cycleWidth = track.scrollWidth / 4;
+    const cycleWidth = track.scrollWidth / 4;
     const animation = track.getAnimations()[0];
     if (!animation) return;
 
-    // For mouse drag, read transform and pause immediately.
-    // For touch, defer so vertical page scrolling is never blocked!
     if (!isTouch) {
       const transform = window.getComputedStyle(track).transform;
       offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
       track.style.animationPlayState = "paused";
     }
 
-    dragRef.current = {
+    gestureRef.current = {
+      status: isTouch ? "pending_touch" : "paused_mouse",
       pointerId: event.pointerId,
       pointerType: event.pointerType,
       startX: event.clientX,
@@ -146,42 +177,39 @@ export default function Services() {
       duration,
       animation,
       track,
-      isDragging: false,
-      initialized: !isTouch,
     };
   };
 
   const handlePointerMove = (event) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
+    const gesture = gestureRef.current;
+    if (gesture.status === "idle" || gesture.pointerId !== event.pointerId) return;
 
-    const deltaX = event.clientX - drag.startX;
-    const deltaY = event.clientY - drag.startY;
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
 
-    // On mobile touch: if user is scrolling vertically, release immediately to let browser scroll smoothly!
-    if (drag.pointerType === "touch" && !drag.isDragging) {
+    // Arbitration for touch: if user is scrolling vertically, immediately abort drag
+    if (gesture.status === "pending_touch") {
       if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        dragRef.current = null;
+        gestureRef.current = { status: "idle" };
         return;
       }
       if (Math.abs(deltaX) < 14 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) {
         return;
       }
-    } else if (!drag.isDragging && Math.abs(deltaX) < 6) {
+    } else if (gesture.status === "paused_mouse" && Math.abs(deltaX) < 6) {
       return;
     }
 
-    if (!drag.isDragging) {
-      drag.isDragging = true;
-      if (!drag.initialized) {
-        const transform = window.getComputedStyle(drag.track).transform;
-        drag.offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
-        drag.duration =
-          Number.parseFloat(window.getComputedStyle(drag.track).animationDuration) * 1000 || 48000;
-        drag.cycleWidth = drag.track.scrollWidth / 4;
-        drag.track.style.animationPlayState = "paused";
-        drag.initialized = true;
+    // Transition to 'dragging' state
+    if (gesture.status !== "dragging") {
+      if (gesture.status === "pending_touch") {
+        const transform = window.getComputedStyle(gesture.track).transform;
+        gesture.offsetX = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+        gesture.track.style.animationPlayState = "paused";
       }
+
+      gesture.status = "dragging";
+
       try {
         event.currentTarget.setPointerCapture(event.pointerId);
       } catch {
@@ -194,50 +222,37 @@ export default function Services() {
       event.preventDefault();
     }
 
-    const width = drag.cycleWidth;
+    const width = gesture.cycleWidth;
     if (!width) return;
 
-    const offsetX = drag.offsetX + deltaX;
+    const offsetX = gesture.offsetX + deltaX;
     const wrappedOffset = -(((-offsetX % width) + width) % width);
-    drag.animation.currentTime = (-wrappedOffset / width) * drag.duration;
-  };
-
-  const handlePointerUp = (event) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-
-    if (drag.isDragging) {
-      suppressClickRef.current = true;
-      event.currentTarget.classList.remove("services__viewport--dragging");
-      try {
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-          event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-      } catch {
-        // Safe fallback
-      }
-    }
-
-    if (drag.track) {
-      drag.track.style.animationPlayState = "";
-    }
-    dragRef.current = null;
+    gesture.animation.currentTime = (-wrappedOffset / width) * gesture.duration;
   };
 
   const openService = (service, event) => {
+    // FSM transition: only allow open when idle
+    if (modalState.status !== "idle") return;
+
     triggerRef.current = event.currentTarget;
     originRectRef.current = event.currentTarget.getBoundingClientRect();
-    setActiveService(service);
-    setIsClosing(false);
+    setModalState({ status: "open", service });
   };
 
   const closeService = (afterClose) => {
-    if (!activeService || isClosing) return;
+    // FSM transition: only allow close when open
+    if (modalState.status !== "open") return;
+
+    const currentService = modalState.service;
     afterCloseRef.current = afterClose;
-    setIsClosing(true);
+    setModalState({ status: "closing", service: currentService });
+
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
     closeTimerRef.current = window.setTimeout(() => {
-      setActiveService(null);
-      setIsClosing(false);
+      setModalState({ status: "idle" });
       window.requestAnimationFrame(() => afterCloseRef.current?.());
     }, 420);
   };
@@ -336,8 +351,8 @@ export default function Services() {
         className="services__viewport"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onPointerUp={endGesture}
+        onPointerCancel={endGesture}
         onClickCapture={(event) => {
           if (!suppressClickRef.current) return;
           suppressClickRef.current = false;

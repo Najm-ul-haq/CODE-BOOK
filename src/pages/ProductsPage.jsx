@@ -10,6 +10,11 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const clearTransitionClones = () => {
+  if (typeof document === "undefined") return;
+  document.querySelectorAll(".project-transition-clone").forEach((el) => el.remove());
+};
+
 /* ─── Interactive Showcase Project Card ─────────────────────────────────────── */
 function ProjectCard({ project }) {
   const isLive = project.status === "Live";
@@ -23,6 +28,12 @@ function ProjectCard({ project }) {
 
     if (isTouchDevice) {
       const cardImage = event.currentTarget.querySelector(".project-card__img");
+      if (!cardImage) {
+        navigate(destination);
+        return;
+      }
+
+      clearTransitionClones();
       const bounds = cardImage.getBoundingClientRect();
       sessionStorage.setItem(
         "project-card-transition",
@@ -30,6 +41,7 @@ function ProjectCard({ project }) {
       );
 
       const clone = cardImage.cloneNode();
+      clone.className = "project-transition-clone";
       Object.assign(clone.style, {
         position: "fixed",
         zIndex: "9999",
@@ -47,7 +59,11 @@ function ProjectCard({ project }) {
         defaults: { ease: "expo.inOut" },
         onComplete: () => {
           navigate(destination);
-          window.requestAnimationFrame(() => window.requestAnimationFrame(() => clone.remove()));
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              clearTransitionClones();
+            });
+          });
         },
       }).to(clone, {
         left: 0,
@@ -214,7 +230,21 @@ export default function ProductsPage() {
   const navigate = useNavigate();
   const galleryRef = useRef(null);
   const gridRef = useRef(null);
+  const isExpandingRef = useRef(false);
   const activeProject = projects.find((p) => p.id === projectId);
+
+  // Global browser history / popstate cleanup for transition clones
+  useEffect(() => {
+    const handlePopState = () => {
+      clearTransitionClones();
+      sessionStorage.removeItem("project-card-transition");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      clearTransitionClones();
+    };
+  }, []);
 
   // Always reset scroll to the very top when entering or switching views
   useEffect(() => {
@@ -225,7 +255,8 @@ export default function ProductsPage() {
 
   // Master Lusion-inspired 3D curved split-panel expansion animation
   const runExpansionAnimation = () => {
-    if (!gridRef.current) return;
+    if (!gridRef.current || isExpandingRef.current) return;
+    isExpandingRef.current = true;
 
     const leftPanel = gridRef.current.querySelector(".project-panel-wrapper--left");
     const rightPanel = gridRef.current.querySelector(".project-panel-wrapper--right");
@@ -236,6 +267,9 @@ export default function ProductsPage() {
 
     const tl = gsap.timeline({
       defaults: { ease: "power3.out" },
+      onComplete: () => {
+        isExpandingRef.current = false;
+      },
     });
 
     if (headerTitle) {
@@ -371,7 +405,7 @@ export default function ProductsPage() {
 
   // Interactive 3D Perspective Mouse Parallax (Signature Lusion Polish)
   const handleMouseMove = (e) => {
-    if (!gridRef.current) return;
+    if (!gridRef.current || isExpandingRef.current) return;
     const rect = galleryRef.current?.getBoundingClientRect();
     if (!rect) return;
     const xPercent = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
@@ -414,7 +448,16 @@ export default function ProductsPage() {
 
     if (isTouchDevice && transition?.rect) {
       const detailImage = document.querySelector(".project-detail__image");
+      if (!detailImage) {
+        clearTransitionClones();
+        sessionStorage.removeItem("project-card-transition");
+        navigate("/products");
+        return;
+      }
+
+      clearTransitionClones();
       const clone = detailImage.cloneNode();
+      clone.className = "project-transition-clone";
       const bounds = detailImage.getBoundingClientRect();
 
       Object.assign(clone.style, {
@@ -436,7 +479,7 @@ export default function ProductsPage() {
         },
         onComplete: () => {
           window.requestAnimationFrame(() => {
-            clone.remove();
+            clearTransitionClones();
             sessionStorage.removeItem("project-card-transition");
           });
         },
@@ -454,6 +497,9 @@ export default function ProductsPage() {
       });
       return;
     }
+
+    clearTransitionClones();
+    sessionStorage.removeItem("project-card-transition");
 
     if (!document.startViewTransition) {
       navigate("/products");

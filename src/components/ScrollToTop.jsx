@@ -1,41 +1,48 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
+  const retryTimerRef = useRef(null);
 
   useEffect(() => {
-    // If a hash anchor is provided (e.g. #services, #contact), smoothly scroll to that section
+    if (retryTimerRef.current) {
+      window.clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+
     if (hash) {
       const id = hash.replace("#", "");
-      const scrollToHash = () => {
+      const prefersReduced =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const behavior = prefersReduced ? "instant" : "smooth";
+
+      const scrollToTarget = () => {
         const el = document.getElementById(id);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
+          el.scrollIntoView({ behavior, block: "start" });
           return true;
         }
         return false;
       };
 
-      if (!scrollToHash()) {
-        const timer = setTimeout(scrollToHash, 60);
-        return () => clearTimeout(timer);
+      if (!scrollToTarget()) {
+        retryTimerRef.current = window.setTimeout(scrollToTarget, 80);
       }
-      return;
+
+      return () => {
+        if (retryTimerRef.current) {
+          window.clearTimeout(retryTimerRef.current);
+          retryTimerRef.current = null;
+        }
+      };
     }
 
-    // When navigating to any page (Products, Home, Project Details), instantly reset scroll to top!
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant",
-    });
-    if (document.documentElement) {
-      document.documentElement.scrollTop = 0;
-    }
-    if (document.body) {
-      document.body.scrollTop = 0;
-    }
+    // Explicit top reset state
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
   }, [pathname, hash]);
 
   return null;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./Contact.css";
 
 const phoneImage = "/pexels-jakubzerdzicki-27574955.jpg";
@@ -109,7 +109,8 @@ export default function Contact() {
   const popupRef = useRef(null);
   const activeApp = apps.find((app) => app.id === selectedApp);
 
-  useEffect(() => {
+  // Synchronous pre-paint measurement state machine
+  useLayoutEffect(() => {
     if (!activeApp) {
       setPopupPosition(null);
       return undefined;
@@ -193,7 +194,11 @@ export default function Contact() {
           <section
             className="contact__popup"
             ref={popupRef}
-            style={popupPosition ? { left: popupPosition.left, top: popupPosition.top } : undefined}
+            style={
+              popupPosition
+                ? { left: popupPosition.left, top: popupPosition.top, visibility: "visible" }
+                : { visibility: "hidden" }
+            }
             role="dialog"
             aria-modal="true"
             aria-labelledby="contact-popup-title"

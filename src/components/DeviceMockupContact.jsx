@@ -150,11 +150,27 @@ function ContactCard({ onSelectApp, className = "" }) {
   );
 }
 
+/* ─── Mockup Image Sources (Fallback Hierarchy) ────────────────────────────── */
+const PHONE_SOURCES = [
+  "/mockup-phone%20(2).webp",
+  "/mockup-phone.png",
+  "/mockup-phone.jpg",
+];
+
+const LAPTOP_SOURCES = [
+  "/laptop.jpg",
+  "/mockup-laptop.png",
+  "/mockup-laptop.jpg",
+];
+
 /* ─── Main Export Component ─────────────────────────────────────────────────── */
 export default function DeviceMockupContact() {
   const [activeApp, setActiveApp] = useState(null);
-  const [laptopImg, setLaptopImg] = useState("/laptop.jpg");
-  const [phoneImg, setPhoneImg] = useState("/mockup-phone%20(2).webp");
+  const [phoneSrcIndex, setPhoneSrcIndex] = useState(0);
+  const [laptopSrcIndex, setLaptopSrcIndex] = useState(0);
+
+  const phoneImg = PHONE_SOURCES[phoneSrcIndex];
+  const laptopImg = LAPTOP_SOURCES[laptopSrcIndex];
 
   // Dismiss modal on Escape key
   useEffect(() => {
@@ -165,6 +181,14 @@ export default function DeviceMockupContact() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeApp]);
+
+  const handlePhoneError = () => {
+    setPhoneSrcIndex((idx) => (idx + 1 < PHONE_SOURCES.length ? idx + 1 : idx));
+  };
+
+  const handleLaptopError = () => {
+    setLaptopSrcIndex((idx) => (idx + 1 < LAPTOP_SOURCES.length ? idx + 1 : idx));
+  };
 
   return (
     <section className="device-contact" id="contact" aria-label="Contact Section">
@@ -183,13 +207,7 @@ export default function DeviceMockupContact() {
             className="device-contact__phone-img"
             loading="eager"
             decoding="async"
-            onError={() => {
-              if (phoneImg === "/mockup-phone%20(2).webp") {
-                setPhoneImg("/mockup-phone.png");
-              } else if (phoneImg === "/mockup-phone.png") {
-                setPhoneImg("/mockup-phone.jpg");
-              }
-            }}
+            onError={handlePhoneError}
           />
 
           {/* Precision-mapped screen area inside phone mockup */}
@@ -216,13 +234,7 @@ export default function DeviceMockupContact() {
               className="device-contact__laptop-img"
               loading="eager"
               decoding="async"
-              onError={() => {
-                if (laptopImg === "/laptop.jpg") {
-                  setLaptopImg("/mockup-laptop.png");
-                } else if (laptopImg === "/mockup-laptop.png") {
-                  setLaptopImg("/mockup-laptop.jpg");
-                }
-              }}
+              onError={handleLaptopError}
             />
 
             {/* Laptop Screen Area: No inner navbar, Contact Us card centered */}
